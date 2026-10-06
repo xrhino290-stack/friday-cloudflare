@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="hi"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Friday</title>
+<style>
+:root{--bg:#050b14;--panel:#0b1626;--line:#16324d;--cy:#38e8ff;--cy2:#1b9fc2;--tx:#d8f3fb;--mut:#7fa3b3;--ok:#46f0a0;--bad:#ff6b7a;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+*{box-sizing:border-box}html,body{margin:0}
+body{background:var(--bg);color:var(--tx);font:15px/1.5 "Rajdhani","Segoe UI",system-ui,sans-serif;min-height:100vh}
+button,input,select{font:inherit;color:inherit}
+button{background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:8px 12px;cursor:pointer}
+button:hover,button:focus-visible{border-color:var(--cy);outline:none}
+input,select{background:#07101c;border:1px solid var(--line);border-radius:8px;padding:9px 11px;width:100%}
+input:focus{border-color:var(--cy);outline:none}
+#lock,#boot{position:fixed;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;background:var(--bg);z-index:9;padding:20px;text-align:center}
+#boot{display:none}#boot h1{font-size:34px;letter-spacing:.3em;color:var(--cy);margin:0;animation:fl 1s steps(2) 3}
+@keyframes fl{50%{opacity:.25}}
+#app{display:none;max-width:560px;margin:0 auto;padding:18px 14px 40px}
+.orbwrap{display:flex;flex-direction:column;align-items:center;margin:6px 0 14px}
+.orb{position:relative;width:170px;height:170px}
+.orb i{position:absolute;border-radius:50%;border:2px solid transparent}
+.r1{inset:0;border-top-color:var(--cy)!important;border-bottom-color:var(--cy)!important;animation:sp 6s linear infinite}
+.r2{inset:16px;border-left-color:var(--cy2)!important;border-right-color:var(--cy2)!important;animation:sp 4s linear infinite reverse}
+.r3{inset:34px;border:2px dashed var(--cy)!important;opacity:.6;animation:sp 12s linear infinite}
+.core{position:absolute;inset:58px;border-radius:50%;background:radial-gradient(circle,#c9faff,var(--cy) 45%,#0a4a63);box-shadow:0 0 30px var(--cy),0 0 70px #38e8ff55;animation:pu 2.4s ease-in-out infinite}
+.orb.talk .core{animation-duration:.5s}.orb.listen .r1{border-top-color:var(--ok)!important;border-bottom-color:var(--ok)!important}
+@keyframes sp{to{transform:rotate(360deg)}}@keyframes pu{50%{transform:scale(.88);opacity:.8}}
+.name{margin-top:12px;font-size:22px;letter-spacing:.45em;color:var(--cy);padding-left:.45em}
+#status{color:var(--mut);font-size:13px;min-height:20px}
+.row{display:flex;gap:8px;margin:8px 0}
+.chips{display:flex;flex-wrap:wrap;gap:6px;margin:8px 0}.chips button{font-size:13px;padding:5px 10px}
+#log{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:10px;height:190px;overflow:auto;font-size:14px}
+#log p{margin:0 0 7px}.u{color:var(--mut)}.f{color:var(--tx)}.f b{color:var(--cy)}
+.tabs{display:flex;gap:6px;margin:16px 0 8px;overflow-x:auto}.tabs button.on{border-color:var(--cy);color:var(--cy)}
+.pane{display:none;background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:12px}.pane.on{display:block}
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:8px}label{font-size:12px;color:var(--mut);display:block;margin-bottom:2px}
+.out{margin-top:10px;font-size:14px}.out .k{color:var(--cy)}
+svg{width:100%;height:auto;margin-top:8px}
+.item{display:flex;align-items:center;gap:8px;padding:6px 0;border-bottom:1px solid var(--line)}.item span{flex:1}
+.bar{height:6px;background:#07101c;border-radius:3px;overflow:hidden;margin-top:4px}.bar b{display:block;height:100%;background:var(--cy)}
+.ok{color:var(--ok)}.bad{color:var(--bad)}
+@media(prefers-reduced-motion:reduce){*{animation:none!important}}
+</style></head><body>
+
+<div id="lock"><div class="orb" style="width:90px;height:90px"><i class="r1"></i><i class="r2" style="inset:10px"></i><div class="core" style="inset:32px"></div></div>
+<div class="name">FRIDAY</div>
+<input id="pw" type="password" placeholder="Password daalo" style="max-width:240px;text-align:center">
+<button id="unl">Unlock</button><div id="lmsg" style="color:var(--mut);font-size:13px"></div></div>
+<div id="boot"><h1>SYSTEM ON</h1><div id="bt" style="color:var(--mut)"></div></div>
+
+<div id="app">
+<div class="orbwrap"><div class="orb" id="orb"><i class="r1"></i><i class="r2"></i><i class="r3"></i><div class="core"></div></div>
+<div class="name">FRIDAY</div><div id="status">Ready</div></div>
+<div id="log"></div>
+<div class="row"><input id="cmd" placeholder='Kuch bhi poocho ya command do' autocomplete="off"><button id="go">Go</button><button id="mic" title="Bolo">🎤</button></div>
+<div class="chips" id="chips"></div>
+<div class="tabs" id="tabs"></div>
+
+<div class="pane" id="p-eco">
+<div style="color:var(--mut);font-size:13px;margin-bottom:8px">Naya business shuru karne se pehle apne numbers daalo. Friday 24 mahine ka plan aur risk check karegi.</div>
+<div class="g2">
+<div><label>Startup investment (₹)</label><input id="e1" type="number" value="100000"></div>
+<div><label>Monthly fixed cost: rent, bijli, staff (₹)</label><input id="e2" type="number" value="15000"></div>
+<div><label>Selling price / unit (₹)</label><input id="e3" type="number" value="120"></div>
+<div><label>Cost / unit: maal, packing (₹)</label><input id="e4" type="number" value="70"></div>
+<div><label>Pehle mahine ki sales (units)</label><input id="e5" type="number" value="200"></div>
+<div><label>Monthly growth (%)</label><input id="e6" type="number" value="8"></div>
+<div><label>Max capacity / mahina (units)</label><input id="e7" type="number" value="1500"></div>
+<div><label>Aapko monthly chahiye (₹)</label><input id="e8" type="number" value="10000"></div>
+<div><label>Loan (₹, 0 = nahi)</label><input id="e9" type="number" value="0"></div>
+<div><label>Loan interest (% saal)</label><input id="e10" type="number" value="12"></div>
+<div><label>Loan tenure (mahine)</label><input id="e11" type="number" value="24"></div></div>
+<button id="ecoGo" style="margin-top:10px;width:100%">Business check karo</button><div class="out" id="eout"></div><div id="echart"></div></div>
+<div class="pane" id="p-notes"><div class="row"><input id="ni" placeholder="Note likho"><button id="na">Add</button></div><div id="nl"></div></div>
+
+<div class="pane" id="p-books"><div class="g2"><div><label>Book ka naam</label><input id="bn"></div><div><label>Total pages</label><input id="bp" type="number"></div></div>
+<button id="ba" style="margin:8px 0;width:100%">Book add karo</button><div id="bl"></div></div>
+
+<div class="pane" id="p-grow"><div id="tip" style="margin-bottom:10px"></div><button id="tipn">Naya tip</button>
+<h4 style="margin:14px 0 4px;color:var(--cy)">Aaj ki habits</h4><div class="row"><input id="hi" placeholder="Nayi habit"><button id="ha">Add</button></div><div id="hl"></div></div>
+
+<div class="pane" id="p-set"><label>AI mode</label><select id="am"><option value="normal">Normal</option><option value="mentor">Mentor (growth, books, galti sudhaar)</option><option value="biz">Business advisor</option></select>
+<label style="margin-top:8px">Voice mode</label><select id="vm"></select>
+<label style="margin-top:8px">Voice (device ki)</label><select id="vv"></select>
+<div class="row"><button id="vt">Test voice</button><button id="vs">Voice on/off</button></div>
+<label style="margin-top:10px">Naya password</label><div class="row"><input id="np" type="password"><button id="ns">Save</button></div>
+<button id="lk" style="width:100%">Lock karo</button></div>
+</div>
+
+<script>
+const $=id=>document.getElementById(id);
+const S={get(k,d){try{const v=localStorage.getItem('fr_'+k);return v?JSON.parse(v):d}catch(e){return d}},set(k,v){try{localStorage.setItem('fr_'+k,JSON.stringify(v))}catch(e){}}};
+let voiceOn=S.get('von',true),modeIdx=S.get('mode',0),voices=[];
+const MODES=[{n:'Movie (female)',p:1.08,r:.95},{n:'Soft',p:1.25,r:.88},{n:'Fast',p:1.1,r:1.2},{n:'Deep',p:.7,r:.9},{n:'Robot',p:.5,r:1}];
+/* lock + boot */
+function unlock(){const pw=S.get('pw','friday');if($('pw').value===pw){$('lock').style.display='none';$('boot').style.display='flex';
+const L=['Core online','Voice module loaded','Economics engine ready','Mentor module ready'];let i=0;const t=setInterval(()=>{$('bt').textContent=L[i++]||'';if(i>L.length){clearInterval(t);$('boot').style.display='none';$('app').style.display='block';say('System on. Main Friday hoon. Boliye, kya karna hai?')}},550)}else $('lmsg').textContent='Galat password. Pehli baar ho to "friday" try karo.'}
+$('unl').onclick=unlock;$('pw').onkeydown=e=>{if(e.key==='Enter')unlock()};
+/* voice */
+function loadVoices(){voices=speechSynthesis.getVoices();const fem=/female|zira|samantha|heera|neerja|swara|veena|aria|jenny|karen|susan|google uk english female|hindi/i;
+$('vv').innerHTML=voices.map((v,i)=>`<option value="${i}">${v.name} (${v.lang})</option>`).join('');
+let si=S.get('vi',-1);if(si<0||!voices[si]){si=voices.findIndex(v=>fem.test(v.name)&&/en|hi/i.test(v.lang));if(si<0)si=0}$('vv').value=si}
+try{loadVoices();speechSynthesis.onvoiceschanged=loadVoices}catch(e){}
+$('vm').innerHTML=MODES.map((m,i)=>`<option value="${i}">${m.n}</option>`).join('');$('vm').value=modeIdx;
+$('vm').onchange=()=>{modeIdx=+$('vm').value;S.set('mode',modeIdx);say('Voice badal gayi.')};
+$('vv').onchange=()=>{S.set('vi',+$('vv').value);say('Ye meri nayi awaaz hai.')};
+$('vt').onclick=()=>say('Hello Nitu, main Friday hoon.');
+$('vs').onclick=()=>{voiceOn=!voiceOn;S.set('von',voiceOn);if(!voiceOn)speechSynthesis.cancel();log('f','Voice '+(voiceOn?'on':'off'))};
+function say(t,silent,nolog){if(!nolog)log('f',t);if(!voiceOn||silent)return;try{speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(t.replace(/<[^>]+>/g,'').replace(/[*#_]/g,'').slice(0,500));const v=voices[+$('vv').value];if(v){u.voice=v;u.lang=v.lang}const m=MODES[modeIdx];u.pitch=m.p;u.rate=m.r;u.onstart=()=>$('orb').classList.add('talk');u.onend=()=>$('orb').classList.remove('talk');speechSynthesis.speak(u)}catch(e){}}
+function log(c,t){const p=document.createElement('p');p.className=c;p.innerHTML=c==='u'?'› '+esc(t):'<b>F:</b> '+t;$('log').appendChild(p);$('log').scrollTop=1e6}
+function esc(s){return s.replace(/[&<>]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[c]))}
+/* open links */
+function openUrl(u){const w=window.open(u,'_blank');if(!w)log('f',`Browser ne pop-up roka. <a href="${u}" target="_blank" rel="noopener" style="color:var(--cy)">Yahan tap karo</a>`)}
+/* commands */
+const JOKES=['Programmer ko bola gaya "bahar jao". Wo bola: pehle break point lagata hoon.','WiFi aur main same hain: dono ko password chahiye aur dono kabhi connect nahi hote.','Bug nahi hai, ye undocumented feature hai.'];
+const TIPS=['Aaj ek chhota kaam 25 minute bina phone ke karo. Phir 5 minute break.','Skill ko paise mein badalne ke liye pehle 1 paying client dhundho, 10 nahi.','Kal ka kaam aaj raat likh ke so jao. Subah decision lene mein energy waste nahi hogi.','Roz 10 page padho. Saal mein 12+ books ho jaati hain.','Galti hui to seekho aur aage badho. Khud se politely baat karo.','Apna kaam dikhao: ek portfolio link har client ko bhejo.'];
+const QUOTES=['Jo roz thoda sa karta hai, wo ek din bahut kuch kar jaata hai.','Chhota start bhi start hota hai.','Discipline motivation se zyada der tak chalta hai.'];
+const pick=a=>a[Math.floor(Math.random()*a.length)];
+function run(raw){const q=raw.trim();if(!q)return;log('u',q);const l=q.toLowerCase();let m;
+if(free(l)){ask(q)}
+else if(m=l.match(/^(?:ask|puchho|batao|samjhao)\s+(.+)/)){ask(m[1])}
+else if(m=l.match(/^(?:play|gana|song)\s+(.+)/)){say(`${m[1]} YouTube pe khol raha hoon.`);openUrl('https://www.youtube.com/results?search_query='+encodeURIComponent(m[1]+' song'))}
+else if(m=l.match(/^(?:youtube|yt)\s*(.*)/)){say('YouTube khol raha hoon.');openUrl(m[1]?'https://www.youtube.com/results?search_query='+encodeURIComponent(m[1]):'https://www.youtube.com')}
+else if(m=l.match(/^(?:search|google|dhundo)\s+(.+)/)){say(`"${m[1]}" search kar raha hoon.`);openUrl('https://www.google.com/search?q='+encodeURIComponent(m[1]))}
+else if(m=l.match(/^(?:wiki|wikipedia)\s+(.+)/)){say('Wikipedia khol raha hoon.');openUrl('https://en.wikipedia.org/w/index.php?search='+encodeURIComponent(m[1]))}
+else if(m=l.match(/^(?:map|maps)\s+(.+)/)){say('Map khol raha hoon.');openUrl('https://www.google.com/maps/search/'+encodeURIComponent(m[1]))}
+else if(m=l.match(/^(?:translate|anuvad)\s+(.+)/)){say('Translate khol raha hoon.');openUrl('https://translate.google.com/?sl=auto&tl=hi&text='+encodeURIComponent(m[1]))}
+else if(/\b(time|samay|baje)\b/.test(l))say('Abhi '+new Date().toLocaleTimeString('en-IN',{hour:'2-digit',minute:'2-digit'})+' baje hain.');
+else if(/\b(date|tarikh|aaj kya din)\b/.test(l))say('Aaj '+new Date().toLocaleDateString('en-IN',{weekday:'long',day:'numeric',month:'long',year:'numeric'})+' hai.');
+else if(m=l.match(/^(?:note|yaad rakho)\s+(.+)/)){const n=S.get('notes',[]);n.unshift(m[1]);S.set('notes',n);renderNotes();say('Note save kar liya.')}
+else if(m=l.match(/^(?:timer)\s+(\d+)\s*(min|sec|s|m)?/)){const s=+m[1]*(/^m/.test(m[2]||'m')?60:1);say(`${m[1]} ${/^m/.test(m[2]||'m')?'minute':'second'} ka timer start.`);setTimeout(()=>say('Timer khatam ho gaya!'),s*1000)}
+else if(m=l.match(/^(?:calc|calculate|hisab)\s+(.+)/)){const ex=m[1].replace(/x/g,'*').replace(/[^0-9+\-*/().%\s]/g,'');try{const r=Function('"use strict";return ('+ex+')')();say(`Answer: <b>${r}</b>`)}catch(e){say('Ye calculation samajh nahi aayi.')}}
+else if(/profit|economics|business|break.?even/.test(l)){tab('eco');say('Business planner khol diya. Numbers daalo, main 24 mahine ka plan aur risk dikhaungi.')}
+else if(/joke|mazak/.test(l))say(pick(JOKES));
+else if(/quote|motivat|himmat/.test(l))say(pick(QUOTES));
+else if(/tip|mentor|growth/.test(l)){tab('grow');say(pick(TIPS))}
+else if(/book|kitab/.test(l)){tab('books');say('Books panel khol diya.')}
+else if(/voice (change|badlo)|awaaz/.test(l)){modeIdx=(modeIdx+1)%MODES.length;$('vm').value=modeIdx;S.set('mode',modeIdx);say('Voice mode: '+MODES[modeIdx].n)}
+else if(/^lock/.test(l)){location.reload()}
+else if(/help|kya kar sakti/.test(l))say('Main ye kar sakti hoon: <b>play [song]</b>, <b>search [kuch bhi]</b>, <b>youtube</b>, <b>wiki</b>, <b>map</b>, <b>translate</b>, <b>time</b>, <b>date</b>, <b>note [text]</b>, <b>timer 5 min</b>, <b>calc 12*8</b>, <b>profit</b>, <b>tip</b>, <b>joke</b>, <b>quote</b>, <b>voice badlo</b>, <b>lock</b>. Aur kuch bhi poochho, Friday AI se jawab degi.');
+else if(/^(hello|hi|hey|namaste)\b/.test(l))say('Namaste Nitu! Kya karein aaj?');
+else{ask(q)}}
+$('go').onclick=()=>{run($('cmd').value);$('cmd').value=''};$('cmd').onkeydown=e=>{if(e.key==='Enter')$('go').click()};
+['play kesariya','youtube','time','joke','quote','tip','profit','help'].forEach(c=>{const b=document.createElement('button');b.textContent=c;b.onclick=()=>run(c);$('chips').appendChild(b)});
+/* mic */
+const SR=window.SpeechRecognition||window.webkitSpeechRecognition;
+$('mic').onclick=()=>{if(!SR){say('Is browser mein mic support nahi hai. Chrome try karo.');return}const r=new SR();r.lang='en-IN';$('orb').classList.add('listen');$('status').textContent='Sun rahi hoon...';
+r.onresult=e=>run(e.results[0][0].transcript);r.onerror=()=>say('Mic ka permission ya awaaz nahi mili.');r.onend=()=>{$('orb').classList.remove('listen');$('status').textContent='Ready'};try{r.start()}catch(e){}};
+/* tabs */
+const T=[['eco','Economics'],['notes','Notes'],['books','Books'],['grow','Growth'],['set','Settings']];
+T.forEach(([k,n])=>{const b=document.createElement('button');b.textContent=n;b.id='t-'+k;b.onclick=()=>tab(k);$('tabs').appendChild(b)});
+function tab(k){T.forEach(([x])=>{$('p-'+x).classList.toggle('on',x===k);$('t-'+x).classList.toggle('on',x===k)})}tab('eco');
+/* economics */
+const R=n=>(n<0?'-':'')+'₹'+Math.round(Math.abs(n)).toLocaleString('en-IN');
+const gv=id=>+$(id).value||0;
+function emi(P,r,n){if(!P||!n)return 0;const i=r/1200;return i?P*i*Math.pow(1+i,n)/(Math.pow(1+i,n)-1):P/n}
+function sim(o,k){const E=o.inv-o.loan,pay=emi(o.loan,o.rate,o.ten);let cum=-E,rows=[],pb=null,be=null,mn=cum;
+for(let m=1;m<=24;m++){const u=Math.min(o.cap,o.u1*k*Math.pow(1+o.gr/100,m-1));const pr=(o.p-o.v)*u-o.fx-o.ow-(m<=o.ten?pay:0);cum+=pr;rows.push({m,u,pr,cum});if(be===null&&pr>=0)be=m;if(pb===null&&cum>=0)pb=m;mn=Math.min(mn,cum)}
+return{rows,pb,be,mn,pay,E}}
+const pbT=s=>s.pb?s.pb+' mahine':'24 mahine mein nahi';
+function eco(){const o={inv:gv('e1'),fx:gv('e2'),p:gv('e3'),v:gv('e4'),u1:gv('e5'),gr:gv('e6'),cap:gv('e7')||1e9,ow:gv('e8'),loan:gv('e9'),rate:gv('e10'),ten:gv('e11')};o.loan=Math.min(o.loan,o.inv);
+const cm=o.p-o.v,B=sim(o,1),P=sim(o,.6),O=sim(o,1.4);
+if(cm<=0){$('eout').innerHTML='<div class="bad">Price cost se kam ya barabar hai. Har bikri pe nuksan hoga. Price badhao ya cost ghatao.</div>';$('echart').innerHTML='';return 'Price cost se kam hai, ye business nahi chalega.'}
+const bep=(o.fx+o.ow+B.pay)/cm,m6=B.rows[5].u,mos=(m6-bep)/m6*100;
+let v,c;if(B.pb&&B.pb<=12&&P.pb&&P.pb<=24){v='GO: numbers majboot hain';c='ok'}else if(B.pb&&B.pb<=24){v='CAREFUL: chalega, par risk hai';c='k'}else{v='ABHI NAHI: plan badlo';c='bad'}
+const st=(n,f,k)=>{const q={...o};f(q);return n+': '+pbT(sim(q,k))};
+let h=`<div style="font-size:17px" class="${c}"><b>${v}</b></div>
+<div>Margin/unit: <span class="k">${R(cm)}</span> (${(cm/o.p*100).toFixed(0)}%)${o.loan?` | Loan EMI: <span class="k">${R(B.pay)}</span>`:''}</div>
+<div>Break-even: <span class="k">${Math.ceil(bep)} units/mahina</span> (${R(bep*o.p)} sales). Mahina 6 mein safety margin: <span class="${mos>=0?'ok':'bad'}">${mos.toFixed(0)}%</span></div>
+<div>Pehla profitable mahina: <span class="k">${B.be||'24 tak nahi'}</span> | Paisa wapas (payback): <span class="k">${pbT(B)}</span></div>
+<div>12 mahine ka cash: <span class="${B.rows[11].cum>=0?'ok':'bad'}">${R(B.rows[11].cum)}</span> | 24 mahine: <span class="${B.rows[23].cum>=0?'ok':'bad'}">${R(B.rows[23].cum)}</span></div>
+<div style="margin-top:6px">Kam se kam cash jo chahiye: <span class="k">${R(-B.mn)}</span>. Bura waqt (sales 40% kam) mein: <span class="bad">${R(-P.mn)}</span>. Itna backup rakho.</div>
+<h4 style="margin:12px 0 4px;color:var(--cy)">Agar aisa hua to? (payback)</h4>
+<div>${st('Sales 20% kam',()=>{},.8)}</div><div>${st('Price 10% kam',q=>q.p*=.9,1)}</div><div>${st('Cost 10% zyada',q=>q.v*=1.1,1)}</div><div>${st('Fixed cost 20% zyada',q=>q.fx*=1.2,1)}</div>
+<div style="margin-top:6px;color:var(--mut)">Bura (60%): ${pbT(P)} | Base: ${pbT(B)} | Acha (140%): ${pbT(O)}</div>`;
+$('eout').innerHTML=h;
+const all=[B,P,O],vals=all.flatMap(x=>x.rows.map(r=>r.cum)).concat(0),mx=Math.max(...vals),mn=Math.min(...vals),W=320,H=140,y=n=>6+(mx-n)/((mx-mn)||1)*(H-12),x=m=>8+(m-1)*(W-16)/23;
+const ln=(S,col)=>`<polyline fill="none" stroke="${col}" stroke-width="2" points="${S.rows.map(r=>x(r.m)+','+y(r.cum)).join(' ')}"/>`;
+$('echart').innerHTML=`<svg viewBox="0 0 ${W} ${H+18}"><line x1="0" x2="${W}" y1="${y(0)}" y2="${y(0)}" stroke="#16324d" stroke-dasharray="4"/>${ln(P,'#ff6b7a')}${ln(O,'#46f0a0')}${ln(B,'#38e8ff')}<text x="8" y="${H+14}" fill="#7fa3b3" font-size="10">Mahina 1</text><text x="${W-8}" y="${H+14}" fill="#7fa3b3" font-size="10" text-anchor="end">Mahina 24</text></svg><div style="font-size:12px;color:var(--mut)">Total cash: <span style="color:#38e8ff">base</span>, <span style="color:#46f0a0">acha</span>, <span style="color:#ff6b7a">bura</span>. Dotted line ke upar matlab paisa wapas mil gaya.</div>`;
+return v+'. Payback '+pbT(B)+'. Kam se kam '+R(-B.mn)+' cash chahiye.'}
+$('ecoGo').onclick=()=>{const r=eco();lastEco=r;say(r)};eco();
+/* AI brain */
+let AI=null,lastEco='',hist=[];
+const WORKER_URL='https://jarvis.uncomfortabletruthsrakesh.workers.dev';AI=async(prompt,o)=>{const r=await fetch(WORKER_URL,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({prompt})});if(!r.ok)throw{code:r.status===429?'rate_limited':'error'};const d=await r.json();if(o&&o.onText)o.onText({text:d.text});return{text:d.text}};
+const
