@@ -31,8 +31,15 @@ $('go').onclick=()=>{run($('cmd').value);$('cmd').value=''};$('cmd').onkeydown=e
 ['play kesariya','youtube','time','joke','quote','tip','profit','help'].forEach(c=>{const b=document.createElement('button');b.textContent=c;b.onclick=()=>run(c);$('chips').appendChild(b)});
 /* mic */
 const SR=window.SpeechRecognition||window.webkitSpeechRecognition;
-$('mic').onclick=()=>{if(!SR){say('Is browser mein mic support nahi hai. Chrome try karo.');return}const r=new SR();r.lang='en-IN';$('orb').classList.add('listen');$('status').textContent='Sun rahi hoon...';
-r.onresult=e=>run(e.results[0][0].transcript);r.onerror=()=>say('Mic ka permission ya awaaz nahi mili.');r.onend=()=>{$('orb').classList.remove('listen');$('status').textContent='Ready'};try{r.start()}catch(e){}};
+let rec=null;
+function listen(){try{speechSynthesis.cancel()}catch(e){}if(curAudio){curAudio.pause();curAudio=null}$('orb').classList.remove('talk');
+if(rec){try{rec.stop()}catch(e){}return}
+if(!SR){say('Is browser mein mic support nahi hai. Chrome try karo.');return}
+const r=new SR();rec=r;r.lang='en-IN';$('orb').classList.add('listen');$('status').textContent='Sun rahi hoon...';
+r.onresult=e=>run(e.results[0][0].transcript);r.onerror=()=>say('Mic ka permission ya awaaz nahi mili.');r.onend=()=>{rec=null;$('orb').classList.remove('listen');$('status').textContent='Ready'};
+try{r.start()}catch(e){rec=null;$('orb').classList.remove('listen');$('status').textContent='Ready'}}
+$('mic').onclick=listen;$('orb').onclick=listen;
+$('orb').style.cursor='pointer';$('orb').style.webkitTapHighlightColor='transparent';$('orb').setAttribute('role','button');$('orb').setAttribute('aria-label','Friday se baat karo');
 /* tabs */
 const T=[['eco','Economics'],['notes','Notes'],['books','Books'],['grow','Growth'],['set','Settings']];
 T.forEach(([k,n])=>{const b=document.createElement('button');b.textContent=n;b.id='t-'+k;b.onclick=()=>tab(k);$('tabs').appendChild(b)});
